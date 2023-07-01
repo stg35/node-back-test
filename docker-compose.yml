@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  back:
+    container_name: 'back'
+    build: .
+    depends_on:
+      - postgres
+    env_file: .env
+    environment:
+      - DB_HOST=postgres-db
+      - PORT=$PORT
+      - DB_USER=$DB_USER
+      - DB_PASS=$DB_PASS
+      - DB_PORT=$DB_PORT
+      - DB_SCHEMA=$DB_SCHEMA
+    ports:
+      - '8000:8000'
+    volumes:
+      - ./:/usr/src/app/
+      - ./node_modules:/usr/src/app/node_modules
+
+  postgres:
+    container_name: 'postgres-db'
+    image: postgres:12-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=store
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
